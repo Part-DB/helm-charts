@@ -1,3 +1,5 @@
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/part-db)](https://artifacthub.io/packages/search?repo=part-db)
+
 # Helm charts for Part-DB
 
 This repository contains [Helm charts](https://helm.sh/) for easy setup of [Part-DB](https://github.com/Part-DB/Part-DB-server) with kubernets.

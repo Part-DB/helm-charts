@@ -1,0 +1,6 @@
+# Artifact Hub repository metadata file
+# Used to become verified publisher and more - https://artifacthub.io/docs/topics/repositories/#verified-publisher
+repositoryID: ae7170b4-f69f-4726-8760-8898a3dbfaf1
+owners:
+  - name: Jan Böhmer
+    email: mail@jan-boehmer.de

@@ -1,7 +1,7 @@
 apiVersion: v1
 name: part-db
 
-version: 0.0.2
+version: 0.0.3
 
 description: Part-DB inventory management system
 keywords:
@@ -11,6 +11,7 @@ keywords:
   - php
   - opensource
 engine: gotpl
+type: application
 home: https://github.com/Part-DB/Part-DB-server
 sources:
   - https://github.com/Part-DB/Part-DB-server

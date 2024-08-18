@@ -1,0 +1,76 @@
+image:
+  registry: docker.io
+  repository: jbtronics/part-db1
+  tag: latest
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: Always
+  ## Optionally specify an array of imagePullSecrets.
+  ## Secrets must be manually created in the namespace.
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ##
+  ##pullSecrets:
+  ##   - regsecret
+
+app:
+  url: 
+  db_type: sqlite
+  lang: en
+  currency: EUR
+  tz: 
+  enforce_change_comments: "part_edit,part_delete,datastructure_edit,datastructure_delete"
+
+## Environment variables, to pass to the entry point
+##
+# extraVars:
+#   - name: NAMI_DEBUG
+#     value: --log-level trace
+
+db:
+  user: pdbadm
+  password:   ## generate in case of empty
+  db: partdb
+  host: 
+
+## Kubernetes configuration
+##   minikube: NodePort
+##   ingress: ClusterIP
+##   elsewhere: LoadBalancer
+##
+serviceType: ClusterIP
+## Control hosts connecting to "LoadBalancer" only
+serviceLoadBalancerSourceRanges:
+  - 127.0.0.0/8,::1,10.0.0.0/8,192.168.0.0/16
+
+ingress:
+  enabled: false
+  hostname: 
+  annotations:
+    kubernetes.io/ingress.class: cilium
+  ingressClassName: cilium
+  labels:
+    pool: priv
+  tls:
+    - secretName: partdb.xxx.com
+      hosts:
+      - partdb.xxx.com
+
+## For Kubernetes v1.4, v1.5 and v1.6, use 'extensions/v1beta1'
+## For Kubernetes v1.7, use 'networking.k8s.io/v1'
+networkPolicyApiVersion: networking.k8s.io/v1
+
+persistence:
+  accessMode: ReadWriteOnce
+  enabled: true
+  size: 32Gi
+  storageClassName: csi-rbd-sc
+
+#smtp:
+#  host: 
+#  password: 
+#  port: 
+#  protocol: smtps
+#  user: 
+

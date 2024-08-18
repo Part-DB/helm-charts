@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{- include "app.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.serviceType }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  selector: {{- include "app.matchLabels" . | nindent 4 }}
+  {{ if eq .Values.serviceType "LoadBalancer" }}
+  loadBalancerSourceRanges: {{ .Values.serviceLoadBalancerSourceRanges }}
+  {{ end }}

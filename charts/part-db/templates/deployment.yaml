@@ -1,0 +1,125 @@
+apiVersion: {{ template "app.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{- include "app.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels: {{- include "app.matchLabels" . | nindent 6 }}
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 1 # as an absolute number of replicas
+      maxUnavailable: 100% # as % of replicas
+    type: RollingUpdate  
+  template:
+    metadata:
+      labels: {{- include "app.labels" . | nindent 8 }}
+      annotations:
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end}}
+      {{- end }}
+      containers:
+      - name: {{ template "app.fullname" . }}
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        env:
+          - name: APP_ENV
+            value: "docker"
+          - name: DEFAULT_URI
+            value: "{{ required "Root URL value required" .Values.app.url }}"
+          - name: DB_USERNAME
+            value: {{ default "pdbadm" .Values.db.user | quote }}
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "app.fullname" . }}
+                key: db-password
+          - name: DB_DATABASE
+            value: {{ default "partdb" .Values.db.db | quote }}
+          - name: DB_TYPE
+            value: {{ default "sqlite" .Values.app.db_type | quote }}
+          - name: DATABASE_URL
+            value: "$(DB_TYPE)://$(DB_USERNAME):$(DB_PASSWORD)@{{ required "Database server host value required" .Values.db.host }}/$(DB_DATABASE)"
+          - name: DEFAULT_LANG
+            value: {{ default "en" .Values.app.lang | quote }}
+          - name: DEFAULT_TIMEZONE
+            value: {{ default "" .Values.app.tz | quote }}
+          - name: BASE_CURRENCY
+            value: {{ default "EUR" .Values.app.currency | quote }}
+          - name: ALLOW_ATTACHMENT_DOWNLOADS 
+            value: "0"
+          - name: USE_GRAVATAR 
+            value: "0"
+          - name: MAX_ATTACHMENT_FILE_SIZE 
+            value: "100M"
+          - name: ENFORCE_CHANGE_COMMENTS_FOR 
+            value: {{ default "" .Values.app.enforce_change_comments | quote }}
+          - name: CHECK_FOR_UPDATES  
+            value: "0"
+          - name: HISTORY_SAVE_CHANGED_FIELDS  
+            value: "true"
+          - name: HISTORY_SAVE_CHANGED_DATA  
+            value: "true"
+          - name: HISTORY_SAVE_REMOVED_DATA  
+            value: "true"
+        {{- if .Values.serviceLoadBalancerSourceRanges }}
+          - name: TRUSTED_PROXIES  
+            value: {{ join "," .Values.serviceLoadBalancerSourceRanges | quote }}
+        {{- end }}
+
+
+        {{- if .Values.smtp }}
+          - name: SMTP_HOST
+            value: {{ default "" .Values.smtp.host | quote }}
+          - name: SMTP_PORT
+            value: {{ required "SMTP port value required" .Values.smtp.port | quote }}
+          {{- if .Values.smtp.user }}
+          - name: SMTP_USERNAME
+            value: {{ .Values.smtp.user | quote }}
+          - name: SMTP_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "app.fullname" . }}
+                key: smtp-password
+          - name: MAILER_DSN
+            value: "{{ required "SMTP protocol value required" .Values.smtp.protocol }}://$(SMTP_USERNAME):$(SMTP_PASSWORD)@$(SMTP_HOST):$(SMTP_PORT)"
+          {{- else }}
+          - name: MAILER_DSN
+            value: "{{ required "SMTP protocol value required" .Values.smtp.protocol }}://$(SMTP_HOST):$(SMTP_PORT)"
+          {{- end }}
+        {{- end }}
+        
+        {{- if .Values.extraVars }}
+{{ toYaml .Values.extraVars | indent 8 }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: 80
+#        livenessProbe:
+#          httpGet:
+#            path: /healthz
+#            port: http
+#          initialDelaySeconds: 120
+#          timeoutSeconds: 5
+#        readinessProbe:
+#          httpGet:
+#            path: /healthz
+#            port: http
+#          initialDelaySeconds: 5
+#          timeoutSeconds: 1
+        volumeMounts:
+        - name: pub
+          mountPath: /var/www/html/uploads
+          subPath: uploads
+        - name: pub
+          mountPath: /var/www/html/public/media
+          subPath: public_media
+      volumes:
+        - name: pub
+          persistentVolumeClaim:
+            claimName: {{ template "app.fullname" . }}      

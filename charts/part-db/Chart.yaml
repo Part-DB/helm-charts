@@ -1,10 +1,17 @@
 apiVersion: v1
-description: Part-DB inventory management system.
+name: part-db
+version: 0.0.1
+description: Part-DB inventory management system
+keywords:
+  - part-db
+  - inventory
+  - electronics
+  - php
+  - opensource
 engine: gotpl
 maintainers:
 - email: mail@jan-boehmer.de
   name: Jan Böhmer
+  url: https://github.com/jbtronics
 - email: jho4us@gmail.com
   name: Andrey Ivanov
-name: part-db
-version: 0.0.1

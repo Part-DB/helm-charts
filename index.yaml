@@ -2,6 +2,30 @@ apiVersion: v1
 entries:
   part-db:
   - apiVersion: v1
+    created: "2024-08-18T12:31:25.050536963Z"
+    description: Part-DB inventory management system
+    digest: 13723d9332a07c1d2c9d10fb175bd47cffd479e8a4ca70f7580fab7a6634cea3
+    home: https://github.com/Part-DB/Part-DB-server
+    icon: https://part-db.github.io/helm-charts/icon.svg
+    keywords:
+    - part-db
+    - inventory
+    - electronics
+    - php
+    - opensource
+    maintainers:
+    - email: mail@jan-boehmer.de
+      name: Jan Böhmer
+      url: https://github.com/jbtronics
+    - email: jho4us@gmail.com
+      name: Andrey Ivanov
+    name: part-db
+    sources:
+    - https://github.com/Part-DB/Part-DB-server
+    urls:
+    - https://github.com/Part-DB/helm-charts/releases/download/part-db-0.0.2/part-db-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v1
     created: "2024-08-18T12:11:46.025377439Z"
     description: Part-DB inventory management system.
     digest: da39821fc728a181cb448908716e0e740a52f687584b2539e634866500fc0d74
@@ -14,4 +38,4 @@ entries:
     urls:
     - https://github.com/Part-DB/helm-charts/releases/download/part-db-0.0.1/part-db-0.0.1.tgz
     version: 0.0.1
-generated: "2024-08-18T12:11:46.025390964Z"
+generated: "2024-08-18T12:31:25.050549917Z"

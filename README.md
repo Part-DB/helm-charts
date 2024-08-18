@@ -25,3 +25,5 @@ To install the part-db chart:
 To uninstall the chart:
 
     helm delete my-part-db
+
+This repository is also available at [ArtifactHUB](https://artifacthub.io/packages/search?repo=part-db).

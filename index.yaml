@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  part-db:
+  - apiVersion: v1
+    created: "2024-08-18T12:11:46.025377439Z"
+    description: Part-DB inventory management system.
+    digest: da39821fc728a181cb448908716e0e740a52f687584b2539e634866500fc0d74
+    maintainers:
+    - email: mail@jan-boehmer.de
+      name: Jan Böhmer
+    - email: jho4us@gmail.com
+      name: Andrey Ivanov
+    name: part-db
+    urls:
+    - https://github.com/Part-DB/helm-charts/releases/download/part-db-0.0.1/part-db-0.0.1.tgz
+    version: 0.0.1
+generated: "2024-08-18T12:11:46.025390964Z"

@@ -27,3 +27,7 @@ To uninstall the chart:
     helm delete my-part-db
 
 This repository is also available at [ArtifactHUB](https://artifacthub.io/packages/search?repo=part-db).
+
+## License
+
+The charts in this repository are licensed under the MIT License. See the LICENSE file in this repository or in the individual charts for more info.

@@ -1,21 +1,24 @@
-apiVersion: {{ template "app.deployment.apiVersion" . }}
-kind: Deployment
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
   name: {{ template "app.fullname" . }}
   labels: {{- include "app.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels: {{- include "app.matchLabels" . | nindent 6 }}
   replicas: 1
-  strategy:
-    rollingUpdate:
-      maxSurge: 1 # as an absolute number of replicas
-      maxUnavailable: 100% # as % of replicas
-    type: RollingUpdate  
+  serviceName: {{ template "app.fullname" . }}
   template:
     metadata:
       labels: {{- include "app.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
       annotations:
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
     spec:
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:

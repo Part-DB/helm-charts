@@ -7,10 +7,10 @@ metadata:
 stringData:
 {{- with .Values.app }}
   APP_ENV: docker
-  DEFAULT_URI: "{{ .url | default ( include "app.name" . ) }}"
+  DEFAULT_URI: "{{ .url | default ( include "app.url" $ ) }}"
   BASE_CURRENCY: {{ .currency | quote }}
-  ALLOW_ATTACHMENT_DOWNLOADS: {{ .attachment_downloads | bool | int | quote }}
-  USE_GRAVATAR: {{ .gravatar | bool | int | quote }}
+  ALLOW_ATTACHMENT_DOWNLOADS: {{ .attachment_downloads | int | quote }}
+  USE_GRAVATAR: {{ .gravatar | int | quote }}
   DEFAULT_LANG: {{ .lang }}
   DEFAULT_TIMEZONE: {{ .tz | quote }}
   ENFORCE_CHANGE_COMMENTS_FOR: {{ .enforce_change_comments | quote }}
@@ -41,7 +41,7 @@ stringData:
 
 {{- with .Values.smtp }}
   SMTP_HOST: {{ .host | quote }}
-  SMTP_PORT: {{ required "SMTP port value required" .host | quote }}
+  SMTP_PORT: {{ required "SMTP port value required" .port | quote }}
   {{- if .user }}
   SMTP_USERNAME: {{ .user | quote }}
   SMTP_PASSWORD: {{ .password | quote }}

@@ -1,3 +1,6 @@
+nameOverride: ""
+fullnameOverride: ""
+
 image:
   registry: docker.io
   repository: jbtronics/part-db1

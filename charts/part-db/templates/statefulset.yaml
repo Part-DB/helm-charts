@@ -75,7 +75,6 @@ spec:
 #          initialDelaySeconds: 5
 #          timeoutSeconds: 1
         volumeMounts:
-        volumeMounts:
         - name: pub
           mountPath: /var/www/html/var/db
           subPath: db
@@ -89,7 +88,7 @@ spec:
       {{- if .Values.persistence.enabled }}
         - name: pub
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (template "app.fullname" .) }}
+            claimName: {{ .Values.persistence.existingClaim | default ( include "app.fullname" . ) }}
       {{- else }}
         - name: pub
           emptyDir: {}

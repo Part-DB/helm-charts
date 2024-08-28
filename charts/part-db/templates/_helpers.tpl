@@ -52,5 +52,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Values.ingress.enabled -}}
 {{ .Values.ingress.tls | ternary "https" "http" }}://{{ .Values.ingress.hostname }}
 {{- else -}}
-http://{{ template "app.name" . }}
+http://{{ include "app.name" . }}
+{{- end -}}
 {{- end -}}

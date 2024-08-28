@@ -9,11 +9,11 @@ metadata:
   {{- end }}
 spec:
   type: {{ .Values.service.type }}
-  ports:
-  - name: http
-    port: 80
-    targetPort: http
   selector: {{ include "app.matchLabels" . | nindent 4 }}
   {{- if eq .Values.service.type "LoadBalancer" }}
   loadBalancerSourceRanges: {{ .Values.service.LoadBalancerSourceRanges }}
   {{- end }}
+  ports:
+  - name: http
+    port: 80
+    targetPort: http

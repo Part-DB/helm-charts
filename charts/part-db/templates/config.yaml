@@ -7,7 +7,7 @@ metadata:
 stringData:
 {{- with .Values.app }}
   APP_ENV: docker
-  DEFAULT_URI: "{{ required "Root URL value required" .url }}"
+  DEFAULT_URI: "{{ .url | default ( include "app.name" . ) }}"
   BASE_CURRENCY: {{ .currency | quote }}
   ALLOW_ATTACHMENT_DOWNLOADS: {{ .attachment_downloads | bool | int | quote }}
   USE_GRAVATAR: {{ .gravatar | bool | int | quote }}

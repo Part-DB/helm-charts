@@ -47,3 +47,10 @@ Labels to use on deploy.spec.selector.matchLabels and svc.spec.selector
 app.kubernetes.io/name: {{ template "app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
+
+{{- define "app.url" -}}
+{{- if .Values.ingress.enabled -}}
+{{ .Values.ingress.tls | ternary "https" "http" }}://{{ .Values.ingress.hostname }}
+{{- else -}}
+http://{{ template "app.name" . }}
+{{- end -}}

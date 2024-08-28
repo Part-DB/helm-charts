@@ -73,7 +73,7 @@ spec:
         {{- end }}
 
 
-        {{- if .Values.smtp }}
+        {{- if .Values.smtp.host }}
           - name: SMTP_HOST
             value: {{ default "" .Values.smtp.host | quote }}
           - name: SMTP_PORT

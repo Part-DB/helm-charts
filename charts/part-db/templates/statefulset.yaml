@@ -50,7 +50,7 @@ spec:
           {{- toYaml .Values.extraVars | nindent 10 }}
         {{- end }}
         volumeMounts:
-        - name: pub
+        - name: data
           mountPath: /var/www/html/var/db
           subPath: db
       containers:
@@ -75,21 +75,41 @@ spec:
             port: http
           timeoutSeconds: 5
         volumeMounts:
-        - name: pub
+        - name: data
           mountPath: /var/www/html/var/db
           subPath: db
-        - name: pub
+        - name: data
           mountPath: /var/www/html/uploads
           subPath: uploads
-        - name: pub
+        - name: data
           mountPath: /var/www/html/public/media
           subPath: public_media
       volumes:
-      {{- if .Values.persistence.enabled }}
-        - name: pub
+      {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
+        - name: data
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default ( include "app.fullname" . ) }}
-      {{- else }}
-        - name: pub
+            claimName: {{ .Values.persistence.existingClaim }}
+      {{- else if not .Values.persistence.enabled }}
+        - name: data
           emptyDir: {}
+      {{- else }}
+        []
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+      {{- with .Values.persistence }}
+        {{- if .storageClass }}
+          {{- if (eq "-" .storageClass) }}
+        storageClassName: ""
+          {{- else }}
+        storageClassName: "{{ .storageClass }}"
+          {{- end }}
+        {{- end }}
+        accessModes:
+          - {{ .accessMode | quote }}
+        resources:
+          requests:
+            storage: {{ .size | quote }}
+      {{- end }}
       {{- end }}

@@ -30,7 +30,6 @@ stringData:
   DB_PASSWORD: {{ .password | quote }}
   DB_HOSTNAME: {{ .host | quote }}
   DB_DATABASE: {{ .db | quote }}
-    {{- end }}
   {{- end }}
 {{- end }}
 

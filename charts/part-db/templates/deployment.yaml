@@ -25,8 +25,10 @@ spec:
       {{- end }}
       containers:
       - name: part-db
-        image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        {{- with .Values.image }}
+        image: "{{ .registry }}/{{ .repository }}:{{ .tag }}"
+        imagePullPolicy: {{ .pullPolicy | quote }}
+        {{- end }}
         envFrom:
         - secretRef:
             name: {{ template "app.fullname" . }}-config

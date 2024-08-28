@@ -19,12 +19,12 @@ stringData:
   HISTORY_SAVE_CHANGED_FIELDS: "true"
   HISTORY_SAVE_CHANGED_DATA: "true"
   HISTORY_SAVE_REMOVED_DATA: "true"
-  DB_TYPE: {{ .db_type }}
 {{- end }}
-  {{- if eq .Values.app.db_type "sqlite" }}
-  DATABASE_URL: "$(DB_TYPE):///%kernel.project_dir%/var/db/app.db"
+{{- with .Values.db }}
+  DB_TYPE: {{ .type }}
+  {{- if eq .type "sqlite" }}
+  DATABASE_URL: "sqlite:///%kernel.project_dir%/var/db/app.db"
   {{- else }}
-    {{- with .Values.db }}
   DATABASE_URL: "$(DB_TYPE)://$(DB_USERNAME):$(DB_PASSWORD)@$(DB_HOSTNAME)/$(DB_DATABASE)"
   DB_USERNAME: {{ .user | quote }}
   DB_PASSWORD: {{ .password | quote }}
@@ -32,6 +32,7 @@ stringData:
   DB_DATABASE: {{ .db | quote }}
     {{- end }}
   {{- end }}
+{{- end }}
 
   {{- if .Values.smtp.user }}
   MAILER_DSN: "$(SMTP_PROTOCOL)://$(SMTP_USERNAME):$(SMTP_PASSWORD)@$(SMTP_HOST):$(SMTP_PORT)"

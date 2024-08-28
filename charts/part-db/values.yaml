@@ -19,7 +19,6 @@ image:
 
 app:
   url: ""
-  db_type: sqlite
   lang: en
   attachment_downloads: false
   gravatar: false
@@ -37,6 +36,7 @@ annotations: {}
 podAnnotations: {}
 
 db:
+  type: sqlite
   user: pdbadm
   password: ""  ## generate in case of empty
   db: partdb

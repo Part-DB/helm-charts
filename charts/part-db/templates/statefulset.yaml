@@ -26,6 +26,8 @@ spec:
         - name: {{ . }}
       {{- end }}
       {{- end }}
+      securityContext:
+        fsGroup: 33
       initContainers:
       - name: migrate-db
         {{- with .Values.image }}
@@ -34,7 +36,12 @@ spec:
         {{- end }}
         securityContext:
           runAsUser: 33 # www-data
-        command: [php, bin/console, doctrine:migrations:migrate]
+        command: [/bin/bash, "-c"]
+        args: 
+          - >-
+            touch var/db/app.db &&
+            php bin/console doctrine:migrations:migrate | tee -a output || exit 1 ;
+            grep "initial password" output > /dev/termination-log || true
         envFrom:
         - secretRef:
             name: {{ template "app.fullname" . }}-config

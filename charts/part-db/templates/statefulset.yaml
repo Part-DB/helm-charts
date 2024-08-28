@@ -26,6 +26,26 @@ spec:
         - name: {{ . }}
       {{- end }}
       {{- end }}
+      initContainers:
+      - name: migrate-db
+        {{- with .Values.image }}
+        image: "{{ .registry }}/{{ .repository }}:{{ .tag }}"
+        imagePullPolicy: {{ .pullPolicy | quote }}
+        {{- end }}
+        securityContext:
+          runAsUser: 33 # www-data
+        command: [php, bin/console, doctrine:migrations:migrate]
+        envFrom:
+        - secretRef:
+            name: {{ template "app.fullname" . }}-config
+        {{- if .Values.extraVars }}
+        env:
+          {{- toYaml .Values.extraVars | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - name: pub
+          mountPath: /var/www/html/var/db
+          subPath: db
       containers:
       - name: part-db
         {{- with .Values.image }}
@@ -55,6 +75,10 @@ spec:
 #          initialDelaySeconds: 5
 #          timeoutSeconds: 1
         volumeMounts:
+        volumeMounts:
+        - name: pub
+          mountPath: /var/www/html/var/db
+          subPath: db
         - name: pub
           mountPath: /var/www/html/uploads
           subPath: uploads

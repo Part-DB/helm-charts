@@ -1,7 +1,7 @@
-apiVersion: v1
+apiVersion: v2
 name: part-db
 
-version: 0.0.3
+version: 0.1.0
 
 description: Part-DB inventory management system
 keywords:

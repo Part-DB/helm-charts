@@ -18,6 +18,8 @@ app:
   url: ""
   db_type: sqlite
   lang: en
+  attachment_downloads: false
+  gravatar: false
   currency: EUR
   tz: ""
   enforce_change_comments: "part_edit,part_delete,datastructure_edit,datastructure_delete"
@@ -48,7 +50,7 @@ ingress:
   enabled: false
   hostname: ""
   annotations: {}
-  ingressClassName: cilium
+  ingressClassName: ""
   labels: []
   #  pool: priv
   tls: []

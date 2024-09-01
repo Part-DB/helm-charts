@@ -25,6 +25,8 @@ app:
   currency: EUR
   tz: ""
   enforce_change_comments: "part_edit,part_delete,datastructure_edit,datastructure_delete"
+  # -- Whether to run initContainer for database initialization or upgrade
+  migrations: true
 
 ## Environment variables, to pass to the entry point
 ##

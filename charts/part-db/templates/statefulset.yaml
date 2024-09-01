@@ -28,6 +28,7 @@ spec:
       {{- end }}
       securityContext:
         fsGroup: 33
+      {{- if .Values.app.migrations }}
       initContainers:
       - name: migrate-db
         {{- with .Values.image }}
@@ -53,6 +54,7 @@ spec:
         - name: data
           mountPath: /var/www/html/var/db
           subPath: db
+      {{- end }}
       containers:
       - name: part-db
         {{- with .Values.image }}

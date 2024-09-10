@@ -1,3 +1,6 @@
+nameOverride: ""
+fullnameOverride: ""
+
 image:
   registry: docker.io
   repository: jbtronics/part-db1
@@ -11,66 +14,69 @@ image:
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
-  ##pullSecrets:
+  pullSecrets: []
   ##   - regsecret
 
 app:
-  url: 
-  db_type: sqlite
+  url: ""
   lang: en
+  attachment_downloads: false
+  gravatar: false
   currency: EUR
-  tz: 
+  tz: ""
   enforce_change_comments: "part_edit,part_delete,datastructure_edit,datastructure_delete"
+  # -- Whether to run initContainer for database initialization or upgrade
+  migrations: true
 
 ## Environment variables, to pass to the entry point
 ##
-# extraVars:
+extraVars: []
 #   - name: NAMI_DEBUG
 #     value: --log-level trace
 
+annotations: {}
+podAnnotations: {}
+
 db:
+  type: sqlite
   user: pdbadm
-  password:   ## generate in case of empty
+  password: ""  ## generate in case of empty
   db: partdb
-  host: 
+  host: ""
 
 ## Kubernetes configuration
 ##   minikube: NodePort
 ##   ingress: ClusterIP
 ##   elsewhere: LoadBalancer
 ##
-serviceType: ClusterIP
-## Control hosts connecting to "LoadBalancer" only
-serviceLoadBalancerSourceRanges:
+service:
+  type: ClusterIP
+  annotations: {}
+  ## Control hosts connecting to "LoadBalancer" only
+  LoadBalancerSourceRanges:
   - 127.0.0.0/8,::1,10.0.0.0/8,192.168.0.0/16
 
 ingress:
   enabled: false
-  hostname: 
-  annotations:
-    kubernetes.io/ingress.class: cilium
-  ingressClassName: cilium
-  labels:
-    pool: priv
-  tls:
-    - secretName: partdb.xxx.com
-      hosts:
-      - partdb.xxx.com
-
-## For Kubernetes v1.4, v1.5 and v1.6, use 'extensions/v1beta1'
-## For Kubernetes v1.7, use 'networking.k8s.io/v1'
-networkPolicyApiVersion: networking.k8s.io/v1
+  hostname: ""
+  annotations: {}
+  className: ""
+  tls: []
+  #  - secretName: partdb.xxx.com
+  #    hosts:
+  #    - partdb.xxx.com
 
 persistence:
-  accessMode: ReadWriteOnce
   enabled: true
-  size: 32Gi
-  storageClassName: csi-rbd-sc
+  size: 4Gi
+  existingClaim: ""
+  accessMode: ReadWriteOnce
+  annotations: {}
+  storageClassName: null
 
-#smtp:
-#  host: 
-#  password: 
-#  port: 
-#  protocol: smtps
-#  user: 
-
+smtp:
+  host: ""
+  user: ""
+  password: ""
+  port: 587
+  protocol: smtps

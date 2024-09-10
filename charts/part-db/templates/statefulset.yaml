@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "app.fullname" . }}
+  labels: {{- include "app.labels" . | nindent 4 }}
+  {{- with .Values.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels: {{- include "app.matchLabels" . | nindent 6 }}
+  replicas: 1
+  serviceName: {{ template "app.fullname" . }}
+  template:
+    metadata:
+      labels: {{- include "app.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
+    spec:
+      {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
+      securityContext:
+        fsGroup: 33
+      {{- if .Values.app.migrations }}
+      initContainers:
+      - name: migrate-db
+        {{- with .Values.image }}
+        image: "{{ .registry }}/{{ .repository }}:{{ .tag }}"
+        imagePullPolicy: {{ .pullPolicy | quote }}
+        {{- end }}
+        securityContext:
+          runAsUser: 33 # www-data
+        command: [/bin/bash, "-c"]
+        args: 
+          - >-
+            touch var/db/app.db &&
+            php bin/console doctrine:migrations:migrate | tee -a output || exit 1 ;
+            grep "initial password" output > /dev/termination-log || true
+        envFrom:
+        - secretRef:
+            name: {{ template "app.fullname" . }}-config
+        {{- if .Values.extraVars }}
+        env:
+          {{- toYaml .Values.extraVars | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - name: data
+          mountPath: /var/www/html/var/db
+          subPath: db
+      {{- end }}
+      containers:
+      - name: part-db
+        {{- with .Values.image }}
+        image: "{{ .registry }}/{{ .repository }}:{{ .tag }}"
+        imagePullPolicy: {{ .pullPolicy | quote }}
+        {{- end }}
+        envFrom:
+        - secretRef:
+            name: {{ template "app.fullname" . }}-config
+        {{- if .Values.extraVars }}
+        env:
+          {{- toYaml .Values.extraVars | nindent 10 }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: 80
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          timeoutSeconds: 5
+        volumeMounts:
+        - name: data
+          mountPath: /var/www/html/var/db
+          subPath: db
+        - name: data
+          mountPath: /var/www/html/uploads
+          subPath: uploads
+        - name: data
+          mountPath: /var/www/html/public/media
+          subPath: public_media
+      volumes:
+      {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim }}
+      {{- else if not .Values.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+      {{- else }}
+        []
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+      {{- with .Values.persistence }}
+        {{- if .storageClass }}
+          {{- if (eq "-" .storageClass) }}
+        storageClassName: ""
+          {{- else }}
+        storageClassName: "{{ .storageClass }}"
+          {{- end }}
+        {{- end }}
+        accessModes:
+          - {{ .accessMode | quote }}
+        resources:
+          requests:
+            storage: {{ .size | quote }}
+      {{- end }}
+      {{- end }}

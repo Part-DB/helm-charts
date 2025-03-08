@@ -71,6 +71,11 @@ spec:
         ports:
         - name: http
           containerPort: 80
+        startupProbe:
+          tcpSocket:
+            port: 80
+          failureThreshold: 30
+          periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /
